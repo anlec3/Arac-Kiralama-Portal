@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Arabalar";
+}
+
+<h1>Arabalar</h1>
+
+<div id="arabaList">
+    <!-- Buraya dinamik olarak Araba kartları eklenecek -->
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadArabalar();
+        });
+
+        function loadArabalar() {
+            $.ajax({
+                url: ApiBaseUrl + "Araba",
+                type: 'GET',
+                dataType: 'application/json',
+                success: function (data) {
+                    var arabaList = $('#arabaList');
+                    arabaList.empty();
+
+                    $.each(data, function (index, araba) {
+                        var card = createArabaCard(araba);
+                        arabaList.append(card);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function createArabaCard(araba) {
+            var card = $('<div>').addClass('card');
+            var cardBody = $('<div>').addClass('card-body');
+
+            var marka = $('<h5>').addClass('card-title').text(araba.marka);
+            var model = $('<p>').addClass('card-text').text(araba.model);
+            var renk = $('<p>').addClass('card-text').text(araba.renk);
+            var gunlukUcret = $('<p>').addClass('card-text').text('Günlük Ücret: ' + araba.gunlukUcret);
+
+            cardBody.append(marka, model, renk, gunlukUcret);
+            card.append(cardBody);
+
+            return card;
+        }
+    </script>
+}

@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Anasayfa";
+}
+
+<div class="text-center">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h1 class="display-4">Hoşgeldiniz, @User.Identity.Name!</h1>
+        <p class="lead">Araç kiralamak için hemen rezervasyon yapın.</p>
+    }
+    else
+    {
+        <h1 class="display-4">Hoşgeldiniz!</h1>
+        <p class="lead">Araç kiralamak için hemen üye olun veya giriş yapın.</p>
+        <div class="btn-group" role="group" aria-label="User Actions">
+            <a class="btn btn-primary" href="/Home/Login">Giriş Yap</a>
+            <a class="btn btn-secondary" href="/Home/SignIn">Kayıt Ol</a>
+        </div>
+    }
+</div>

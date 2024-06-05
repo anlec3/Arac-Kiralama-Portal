@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Kiralama Sayfası</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $.ajax({
+                url: '/api/Araba',
+                method: 'GET',
+                success: function (data) {
+                    var carDropdown = $('#carDropdown');
+                    $.each(data, function (index, car) {
+                        carDropdown.append($('<option></option>').val(car.id).text(car.marka + ' ' + car.model));
+                    });
+                },
+                error: function () {
+                    alert('Araçlar alınamadı.');
+                }
+            });
+
+            $('#rentalForm').submit(function (event) {
+                event.preventDefault();
+
+                var selectedCarId = $('#carDropdown').val();
+                var userId = '@User.Identity.GetUserId()'; // Get the current user's id
+
+                $.ajax({
+                    url: '/api/Kiralamalar/Add',
+                    method: 'POST',
+                    data: { arabaId: selectedCarId, userId: userId }, // Pass the user id to the API
+                    success: function () {
+                        alert('Araç kiralama işlemi başarılı!');
+                    },
+                    error: function () {
+                        alert('Araç kiralama işlemi başarısız.');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Kiralama Sayfası</h1>
+    <form id="rentalForm">
+        <label for="carDropdown">Araba Seçin:</label>
+        <select id="carDropdown"></select>
+        <br />
+        <button type="submit">Kiralama İşlemi Yap</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,286 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="row">
+    <div class="col-md-8">
+        <h2 class="h3 mb-4 text-gray-800">Araba Kayıtları</h2>
+        <table class="table" id="tbArabaList">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Marka</th>
+                    <th>Model</th>
+                    <th>Renk</th>
+                    <th>Günlük Ücret</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <h2 class="h3 mb-4 text-gray-800">Araba Ekle - Düzenle</h2>
+        <div class="mb-2">
+            <label>Marka</label>
+            <input type="text" class="form-control" id="txtMarka" />
+        </div>
+        <div class="mb-2">
+            <label>Model</label>
+            <input type="text" class="form-control" id="txtModel"></input>
+        </div>
+        <div class="mb-2">
+            <label>Renk</label>
+            <input type="text" class="form-control" id="txtRenk"/>
+        </div>
+        <div class="mb-2">
+            <label>Günlük Ücret</label>
+            <input type="text" class="form-control" id="txtGunlukUcret"/>
+        </div>
+        <div class="mb-2">
+            <input type="hidden" id="txtId" />
+            <a id="btnCancel" class="btn btn-danger btn-circle" title="Vazgeç"><i class="fas fa-arrow-left"></i></a>
+            <a id="btnSave" class="btn btn-primary btn-circle ml-1" title="Kaydet"><i class="fas fa-save"></i></a>
+            <a href="#" class="btn btn-danger btn-circle delete" title="Sil" id="btnDelete">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+        <div class="alert" id="divResult"></div>
+    </div>
+
+</div>
+
+
+
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var token = localStorage.getItem("token");
+            if (token == "" || token == null) {
+                location.href = "/Home/Login";
+                return false;
+            }
+
+            var ApiBaseUrl = "@ViewBag.ApiBaseUrl";
+            GetArabaList();
+
+
+
+            $("#tbArabaList tbody").sortable({
+                placeholder: "bg-secodary",
+                axis: "y",
+                handle: '.move',
+                cancel: '',
+                update: function (event, ui) {
+                    var ids = new Array();
+
+                    $("#tbArabaList tbody tr").each(function () {
+                        ids.push(parseInt($(this).attr("id")));
+                    });
+                    ArabaSort(ids);
+                }
+            });
+
+            function ArabaSort(ids) {
+
+                $.ajax({
+                    url: ApiBaseUrl + "Araba/ArabaOrderAjax",
+                    type: "POST",
+                    contentType: "application/json",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    data: JSON.stringify(ids),
+                    success: function () {
+                        GetArabaList();
+                    },
+                    error: function () { }
+                });
+
+            }
+
+            $("#btnSave").click(function () {
+                var marka = $("#txtMarka").val();
+                var model = $("#txtModel").val();
+                var renk = $("#txtRenk").val();
+                var gunlukucret = $("#txtGunlukUcret").val();
+                var id = $("#txtId").val();
+
+                if (marka == "" || model == "" || renk == "" || gunlukucret == "") {
+                    $("#divResult")
+                        .show()
+                        .removeClass()
+                        .addClass("alert alert-danger")
+                        .html("Tüm Alanları Doldurunuz!")
+                        .fadeOut(6000);
+                    return false;
+                }
+                var araba = new Object();
+                araba.Marka = marka;
+                araba.Model = model;
+                araba.Renk = renk;
+                araba.GunlukUcret = gunlukucret;
+                araba.Id = id;
+                var ajaxMetod = "";
+                if (id == 0) {
+                    ajaxMetod = "POST";
+
+                }
+                else {
+                    ajaxMetod = "PUT";
+                }
+                $.ajax({
+                    url: ApiBaseUrl + "Araba",
+                    method: ajaxMetod,
+                    data: JSON.stringify(araba),
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    contentType: "application/json",
+                    success: function (data) {
+                        if (data.status) {
+                            $("#divResult")
+                                .show()
+                                .removeClass()
+                                .addClass("alert alert-success")
+                                .html(data.message)
+                                .fadeOut(6000);
+                            GetArabaList();
+                        } else {
+                            $("#divResult")
+                                .show()
+                                .removeClass()
+                                .addClass("alert alert-danger")
+                                .html(data.message)
+                                .fadeOut(6000);
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    }
+                });
+
+            });
+
+
+
+
+            function GetArabaList() {
+                $.ajax({
+                    url: ApiBaseUrl + "Araba",
+                    method: "GET",
+                    contentType: "application/json",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    success: function (data) {
+                        ArabaDataToTable(data);
+                    },
+                    error: function () { }
+                });
+            }
+
+            function ArabaDataToTable(data) {
+                $("#txtId").val("0");
+                $("#btnDelete").hide();
+                var tr = "";
+                $.each(data, function (i, item) {
+                    
+                    tr += `<tr id="${(item.id)}">
+                                                    <td>${(i + 1)}</td>
+                                                    <td>${item.marka}</td>
+                                                    <td>${item.model}</td>
+                                                    <td>${item.renk}</td>
+                                                    <td>${item.gunlukUcret}</td>
+                                                   <td><a href="#" class="btn btn-primary btn-circle move" title="Taşı">
+                                                       <i class="fas fa-arrows-alt"></i>
+                                                       </a>
+                                                               <a href="/Home/Kiralama/${item.id}" class="btn btn-primary btn-circle" title="Kirala"> <i class="	fas fa-car-alt"></i>
+                                                        </a>
+                                                       <a href="#" class="btn btn-primary btn-circle edit" title="Düzenle Sil">
+                                                       <i class="fas fa-pencil-alt"></i>
+                                                      </a>
+                                                        </td>
+                                                      </tr>`;
+                });
+                $("#tbArabaList tbody").empty();
+                $("#tbArabaList tbody").append(tr);
+            }
+
+
+
+            $(document).on("click", ".edit", function () {
+                var id = $(this).closest("tr").attr("id");
+                $("#txtId").val(id);
+                $("#btnDelete").show();
+                $.ajax({
+                    url: ApiBaseUrl + "Araba/" + id,
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#txtMarka").val(data.marka);
+                        $("#txtModel").val(data.model);
+                        $("#txtRenk").val(data.renk);
+                        $("#txtGunlukUcret").val(data.gunlukucret);
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    }
+                });
+
+            });
+
+            $("#btnCancel").click(function () {
+                $("#txtMarka").val("");
+                $("#txtModel").val("");
+                $("#txtRenk").val("");
+                $("#txtGunlukUcret").val("");
+                $("#txtId").val("0");
+                $("#btnDelete").hide();
+            });
+
+            $("#btnDelete").click(function () {
+                var id = $("#txtId").val();
+                $.ajax({
+                    url: ApiBaseUrl + "Araba/" + id,
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    contentType: "application/json",
+                    success: function (data) {
+                        if (data.status) {
+                            $("#divResult")
+                                .show()
+                                .removeClass()
+                                .addClass("alert alert-success")
+                                .html(data.message)
+                                .fadeOut(6000);
+                            GetArabaList();
+                        } else {
+                            $("#divResult")
+                                .show()
+                                .removeClass()
+                                .addClass("alert alert-danger")
+                                .html(data.message)
+                                .fadeOut(6000);
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    }
+                });
+            });
+
+        });
+    </script>
+}

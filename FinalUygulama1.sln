@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8905C9B5-B02D-409C-BE35-E8A2358CA774}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinalUygulama.API", "FinalUygulama.API\FinalUygulama.API.csproj", "{C3F56E76-AD4C-43DB-92BA-1F162FE78A68}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinalUygulama.UI", "FinalUygulama.UI\FinalUygulama.UI.csproj", "{C457DD6D-650C-4EB6-9439-E57DDD8CC607}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C3F56E76-AD4C-43DB-92BA-1F162FE78A68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3F56E76-AD4C-43DB-92BA-1F162FE78A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3F56E76-AD4C-43DB-92BA-1F162FE78A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3F56E76-AD4C-43DB-92BA-1F162FE78A68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C457DD6D-650C-4EB6-9439-E57DDD8CC607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C457DD6D-650C-4EB6-9439-E57DDD8CC607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C457DD6D-650C-4EB6-9439-E57DDD8CC607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C457DD6D-650C-4EB6-9439-E57DDD8CC607}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9DA5E6BF-4649-4944-B880-C558C03C058E}
+	EndGlobalSection
+EndGlobal
